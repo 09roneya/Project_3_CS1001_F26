@@ -1,7 +1,7 @@
 import data
 import build_data
 import unittest
-
+import hw3
 
 # These two values are defined to support testing below. The
 # data within these structures should not be modified. Doing
@@ -76,7 +76,7 @@ reduced_data = [
         {'Per Capita Income': 29954,
          'Persons Below Poverty Level': 14.3,
          'Median Household Income': 58697},
-        {'2010 Population': 269637,
+        {'2010 Population': 269637, 
          '2014 Population': 279083,
          'Population Percent Change': 3.5,
          'Population per Square Mile': 81.7},
@@ -180,30 +180,83 @@ class TestCases(unittest.TestCase):
 
     # Part 1
     # test population_total
+    def test_population_total_empty(self):
+        self.assertEqual(hw3.population_total([]), 0)
+    def test_population_total_one_county(self):
+        self.assertEqual(hw3.population_total([reduced_data[0]]), 55395)
 
     # Part 2
     # test filter_by_state
+    def test_filter_by_state_reduced(self):
+        self.assertCountEqual(hw3.filter_by_state(reduced_data, "CA"),[reduced_data[2], reduced_data[3]])
+    def test_filter_by_state_missing_state(self):
+        self.assertEqual(hw3.filter_by_state(reduced_data, "ZZ"), [])
 
     # Part 3
     # test population_by_education
+    def test_population_by_education_one_county(self):
+        self.assertAlmostEqual(hw3.population_by_education([reduced_data[2]], "Bachelor's Degree or Higher"),87911.145)
+    def test_education_missingkey(self):
+            self.assertEqual(hw3.population_by_education(reduced_data, "Not A Real Key"), 0)
     # test population_by_ethnicity
+    def test_population_by_ethnicity_one(self): 
+         self.assertAlmostEqual(hw3.population_by_ethnicity([reduced_data[3]], "Hispanic or Latino"), 65390.85)
+    def test_ethnicity_missingkey(self): 
+         self.assertEqual(hw3.population_by_ethnicity(reduced_data, "Not A Real Key"), 0)
     # test population_below_poverty_level
+    def test_population_below_povertylevel(self): 
+         self.assertAlmostEqual(hw3.population_below_poverty_level([reduced_data[2]]), 39908.869)
+    def test_population_below_povertylevel_empty(self): 
+         self.assertEqual(hw3.population_below_poverty_level([]), 0)
 
     # Part 4
     # test percent_by_education
+    def test_percent_by_education_one_county(self):
+        self.assertAlmostEqual(hw3.percent_by_education([reduced_data[2]], "Bachelor's Degree or Higher"),31.5)
+    def test_percent_by_education_two_counties(self):
+        self.assertAlmostEqual(hw3.percent_by_education([reduced_data[2], reduced_data[3]],"Bachelor's Degree or Higher"),34.22991515863835)
     # test percent_by_ethnicity
+    def test_percent_by_ethnicity_one_county(self):
+        self.assertAlmostEqual(hw3.percent_by_ethnicity([reduced_data[3]], "Hispanic or Latino"),31.5 )
+    def test_percent_by_ethnicity_two_counties(self):
+        self.assertAlmostEqual(hw3.percent_by_ethnicity([reduced_data[2], reduced_data[3]],"Hispanic or Latino"),26.052217813603797 )
     # test percent_below_poverty_level
+    def test_percent_below_poverty_level_one_county(self):
+        self.assertAlmostEqual(hw3.percent_below_poverty_level([reduced_data[2]]),14.3)
+    def test_percent_below_poverty_level_two_counties(self):
+        self.assertAlmostEqual(hw3.percent_below_poverty_level([reduced_data[2], reduced_data[3]]),16.347436368978762)
 
     # Part 5
     # test education_greater_than
+    def test_education_greater_than(self):
+        self.assertCountEqual(hw3.education_greater_than(reduced_data, "Bachelor's Degree or Higher", 20.9),[reduced_data[2], reduced_data[3]])
+    def test_education_greater_than_no_matches(self):
+        self.assertEqual(hw3.education_greater_than(reduced_data, "Bachelor's Degree or Higher", 100),[])
     # test education_less_than
+    def test_education_less_than(self):
+        self.assertCountEqual(hw3.education_less_than(reduced_data, "Bachelor's Degree or Higher", 15),[reduced_data[1]])
+    def test_education_less_than_exact_value(self):
+        self.assertEqual(hw3.education_less_than(reduced_data, "Bachelor's Degree or Higher", 14.3),[])
     # test ethnicity_greater_than
+    def test_ethnicity_greater_than(self):
+        self.assertCountEqual(hw3.ethnicity_greater_than(reduced_data, "Hispanic or Latino", 22),[reduced_data[3]])
+    def test_ethnicity_greater_than_no_matches(self):
+        self.assertEqual(hw3.ethnicity_greater_than(reduced_data, "Hispanic or Latino", 100),[])
     # test ethnicity_less_than
+    def test_ethnicity_less_than(self):
+        self.assertCountEqual(hw3.ethnicity_less_than(reduced_data, "Hispanic or Latino", 6),[reduced_data[0],reduced_data[4], reduced_data[6]])
+    def test_ethnicity_less_than_exact_value(self):
+        self.assertEqual(hw3.ethnicity_less_than(reduced_data, "Hispanic or Latino", 2.7),[])
     # test below_poverty_level_greater_than
+    def test_below_poverty_level_greater_than(self):
+        self.assertCountEqual(hw3.below_poverty_level_greater_than(reduced_data, 15.7),[reduced_data[1], reduced_data[3], reduced_data[5]])
+    def test_below_poverty_level_greater_than_no_matches(self):
+        self.assertEqual(hw3.below_poverty_level_greater_than(reduced_data, 100),[])
     # test below_poverty_level_less_than
-
-
-
+    def test_below_poverty_level_less_than(self):
+        self.assertCountEqual(hw3.below_poverty_level_less_than(reduced_data, 12),[reduced_data[6]])
+    def test_below_poverty_level_less_than_exact_value(self):
+        self.assertEqual(hw3.below_poverty_level_less_than(reduced_data, 11.2),[])
 if __name__ == '__main__':
     unittest.main()
 
